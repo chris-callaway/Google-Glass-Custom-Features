@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,11 +18,18 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.hardware.Camera.Parameters;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -81,9 +91,11 @@ public class CameraActivity extends Activity {
     
 	private Preview mPreview;
 	private RelativeLayout mLayout;
+	private String postalCode;
 	TextToSpeech tts;
     TextView tv1;
     
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,8 +117,69 @@ public class CameraActivity extends Activity {
         //Initialize view
         setContentView(mLayout); 
         
+        //Get location
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        String provider = mLocationManager.getBestProvider(criteria, true);
+        boolean isEnabled = mLocationManager.isProviderEnabled(provider);
+        if (isEnabled) {
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+        // Called when a new location is found by the network location provider.
+        if (location != null) {
+        Geocoder geocoder = new Geocoder(CameraActivity.this.getBaseContext(), Locale.getDefault());
+        // lat,lng, your current location
+        List<Address> addresses = null;
+
+        try {
+        addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+        }
+        catch (IOException e) {
+        System.out.println(e);
+        e.printStackTrace();
+        }
+
+        if (addresses != null && addresses.size() != 0) {
+        // This is how you will get Postal Code
+        postalCode = addresses.get(0).getPostalCode();
+        
         //Send curl request to API
-        new HttpAsyncTask().execute("http://02d791c.netsolhost.com//glassAPI/index.php?location=orlando"); 
+        new HttpAsyncTask().execute("http://02d791c.netsolhost.com/glassAPI/weatherAPI/index.php?zip=" + postalCode); 
+
+        }
+
+        }
+
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        }
+        
+        //Send curl request to API
+//        new HttpAsyncTask().execute("http://02d791c.netsolhost.com//glassAPI/index.php?zip=" + postalCode); 
     }  
  
     public static String GET(String url){
@@ -177,5 +250,31 @@ public class CameraActivity extends Activity {
              
        }
     }
+    
+    @Override
+	public boolean onKeyDown(int keycode, KeyEvent event) {
+		//Main Click
+		if (keycode == KeyEvent.KEYCODE_DPAD_CENTER) {
+			//User tapped touchpad, do something
+			
+            return true;
+		}
+		//Camera click
+		if (keycode == KeyEvent.KEYCODE_CAMERA) {
+
+			return true;
+		}
+		//Swipe down
+		if (keycode == KeyEvent.KEYCODE_BACK) {
+			//User swiped down, do something
+			finish();
+			Intent newView = new Intent(CameraActivity.this, ScrollingCards.class);
+            startActivity(newView); 
+			//makeCard("You swiped down");
+			return true;
+		}
+		
+		return false;
+	}
 	
 }

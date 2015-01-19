@@ -15,10 +15,12 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.Activity;
+import android.content.Intent;
  
 public class CurlRequest extends Activity {
  
@@ -48,7 +50,7 @@ public class CurlRequest extends Activity {
  
         // call AsynTask to perform network operation on separate thread
 //        new HttpAsyncTask().execute("http://hmkcode.com/examples/index.php");
-        new HttpAsyncTask().execute("http://02d791c.netsolhost.com//glassAPI/index.php?location=orlando"); 
+        new HttpAsyncTask().execute("http://02d791c.netsolhost.com//glassAPI/weatherAPI/index.php?zip=32804");  
     }  
  
     public static String GET(String url){
@@ -111,5 +113,31 @@ public class CurlRequest extends Activity {
             etResponse.setText(result);
        }
     }
+    
+    @Override
+	public boolean onKeyDown(int keycode, KeyEvent event) {
+		//Main Click
+		if (keycode == KeyEvent.KEYCODE_DPAD_CENTER) {
+			//User tapped touchpad, do something
+			
+            return true;
+		}
+		//Camera click
+		if (keycode == KeyEvent.KEYCODE_CAMERA) {
+
+			return true;
+		}
+		//Swipe down
+		if (keycode == KeyEvent.KEYCODE_BACK) {
+			//User swiped down, do something
+			finish();
+			Intent newView = new Intent(CurlRequest.this, ScrollingCards.class);
+            startActivity(newView); 
+			//makeCard("You swiped down");
+			return true;
+		}
+		
+		return false;
+	}
        
 }

@@ -123,6 +123,7 @@ public class voiceRecognition extends Activity {
 		//Swipe down
 		if (keycode == KeyEvent.KEYCODE_BACK) {
 			//User swiped down, do something
+			finish();
 			Intent newView = new Intent(voiceRecognition.this, ScrollingCards.class);
             startActivity(newView); 
 			//makeCard("You swiped down");
@@ -131,7 +132,7 @@ public class voiceRecognition extends Activity {
 		}
 		
 		return false;
-	}
+	} 
 
 
 }

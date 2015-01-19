@@ -151,24 +151,28 @@ public class ScrollingCards extends Activity {
             	//Go to main activity
             	if (index == 0){
             		//tts.speak("Going to main activity", TextToSpeech.QUEUE_FLUSH, null);
+            		finish();
             		Intent newView = new Intent(ScrollingCards.this, FullscreenActivity.class);
                     startActivity(newView);
             	}
             	//Go to voice recognition
             	if (index == 1){
             		//tts.speak("Going to voice recognition", TextToSpeech.QUEUE_FLUSH, null);
+            		finish();
             		Intent newView = new Intent(ScrollingCards.this, voiceRecognition.class);
                     startActivity(newView);
             	}
             	//Go to camera preview
             	if (index == 2){
             		//tts.speak("Going to camera preview", TextToSpeech.QUEUE_FLUSH, null);
+            		finish();
             		Intent newView = new Intent(ScrollingCards.this, CameraActivity.class);
                     startActivity(newView);
             	}
             	//Go to curl request
             	if (index == 3){
             		//tts.speak("Going to camera preview", TextToSpeech.QUEUE_FLUSH, null);
+            		finish();
             		Intent newView = new Intent(ScrollingCards.this, CurlRequest.class);
                     startActivity(newView);
             	}
@@ -176,7 +180,25 @@ public class ScrollingCards extends Activity {
         });
     }
     
-     
-    
-    
-}
+    @Override
+    public boolean onKeyDown(int keycode, KeyEvent event) {
+    	//Main Click
+    	if (keycode == KeyEvent.KEYCODE_DPAD_CENTER) {
+    		//User tapped touchpad, do something
+    		return true;
+    	}
+    	//Camera click
+    	if (keycode == KeyEvent.KEYCODE_CAMERA) {
+    		return true;
+    	}
+    	//Swipe down
+    	if (keycode == KeyEvent.KEYCODE_BACK) {
+    		//User swiped down, do something
+    		finish();
+    		return true;
+    	}
+    	
+    	return false;
+    }
+
+} 

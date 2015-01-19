@@ -81,17 +81,6 @@ public class FullscreenActivity extends Activity {
         
 	}
 	
-	public void makeCard(String text){
-        //Set card view
-        Card card = new Card(this);
-        card.setText(text);
-        card.setFootnote("my footnote text");
-        card.setImageLayout(ImageLayout.LEFT);
-      //card.addImage(R.drawable.hitlabnz);
-        
-        setContentView(card.getView());
-    }
-	
 	public void changeText(String text){
 		final TextView tv1 = new TextView(this);
 		tv1.setText(text);  
@@ -117,10 +106,10 @@ public class FullscreenActivity extends Activity {
 		//Swipe down
 		if (keycode == KeyEvent.KEYCODE_BACK) {
 			//User swiped down, do something
+			finish();
 			Intent newView = new Intent(FullscreenActivity.this, ScrollingCards.class);
             startActivity(newView); 
 			//makeCard("You swiped down");
-			//finish();
 			return true;
 		}
 		
